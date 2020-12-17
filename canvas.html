@@ -1,0 +1,167 @@
+<html>
+  <head>
+    <style>
+      body {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        width: 100vw;
+        height: 100vh;
+      }
+
+      canvas {
+        background-color: antiquewhite;
+      }
+    </style>
+  </head>
+  <body>
+    <canvas id="canvas" width="500" height="500"></canvas>
+    <script type="text/javascript" src="/convex-hull.js"></script>
+    <script type="text/javascript">
+
+      let c = document.getElementById('canvas')
+      let ctx = c.getContext('2d');
+      let bounds = { w: c.width, h: c.height }
+
+      // Why does clearRect not work?
+      c.addEventListener('mousemove', ev => {
+        ctx.clearRect(0, 0, 500, 500);
+        ctx.beginPath();
+        ctx.moveTo(Math.floor(ev.offsetX), 0);
+        ctx.lineTo(Math.floor(ev.offsetX), 500);
+        ctx.stroke();
+      })
+
+      const drawPath = ([ first, ...rest ]) => {
+        ctx.beginPath();
+        ctx.moveTo( first.x, first.y );
+        for (const { x,y } of rest) {
+          ctx.lineTo( x, y );
+        }
+        ctx.stroke();
+      }
+      
+      // Add two vectors
+      const add = (a, b) => {
+        return {
+          x: a.x + b.x,
+          y: a.y + b.y,
+          z: a.z + b.z
+        }
+      }
+
+      // Scalar multiple a point object by `n`
+      const scale = n => ({ x, y }) => ({ x:(x * n), y:(y * n) });
+
+      // Translate or shift a point object by `n`
+      const translate = n => ({ x, y }) => ({ x: (x + n), y: (y + n) });
+
+      // A random 2d point
+      const randomPoint = (v) => ({ x: v * Math.random(), y: v * Math.random() });
+
+      // Create out initial point set - constrained to a center square
+      const points = Array(50)
+                    .fill(350)
+                    .map(randomPoint)
+                    .map(translate(87))
+                    .map(p => ({ x: Math.floor(p.x), y: Math.floor(p.y) }));
+
+      // Get last n elements from xs
+      const lastN = (n, xs) => (xs.slice(xs.length - n))
+
+      // Subtract one vector from another
+      const difference = (v,w) => {
+        let diff = {};
+        for (const prop in v) {
+          diff[prop] = v[prop] - w[prop];
+        }
+        return diff;
+      }
+
+      const magnitude = v => Math.sqrt(v.reduce((acc, e) => acc + (e * e), 0))
+
+      // A vector which retains it's directionality but magnitude is 1
+      // -- divide each component by the magnitude of v
+      const normalise = v => {
+        const m = magnitude(v);
+        return v.map(e => e / m);
+      }
+
+      // Linearly interpolate between two points
+      const lerp = (p, a, b) => {
+        return add(scale(1 - p, a), scale(p, b))
+      }
+
+      // a, b, c -- d, e, f
+      const cross = (a, b) => {
+        return {
+          x: a.y * b.z - a.z * b.y,
+          y: a.z * b.x - a.x * b.z,
+          z: a.x * b.y - a.y * b.x
+        };
+        // return [
+        //   b * f - c * e,
+        //   c * d - a * f,
+        //   a * e - b * d
+        // ];
+      }
+
+      //return a * d + b * e + c * f;
+      const dot = (a, b) => a.x * b.x + a.y * b.y + a.z * b.z;
+
+      const determinant = (a, b, c) => {
+        return dot(cross(a, b), c);
+      }
+
+      // Determines if tail of chain makes a left turn
+      const leftTurn = (xs) => {
+        let [ p, q, r ] = lastN(3, xs),
+            pp = { x:1, y:p.x, z:p.y },
+            qq = { x:1, y:q.x, z:q.y },
+            rr = { x:1, y:r.x, z:r.y };
+
+        return determinant(pp, qq, rr) <= 0;
+      }
+
+      // Removes nth element from tail
+      const removeNthFromTail = (n, xs) => {
+        // Copy our input array
+        let res = Array.from(xs);
+
+        // Splice works in-place
+        res.splice(res.length - n, 1);
+        return res;
+      }
+
+      function Draw(){
+
+        let lastFrame = 0;
+        let pointIdx = 0;
+
+        return function draw(timestamp) {
+          requestAnimationFrame(draw);
+
+          let delta = timestamp - lastFrame;
+
+          if (delta >= 100){
+
+            // Draw each point
+            if (pointIdx < points.length){
+              // Grab a single point
+              const { x,y } = points[pointIdx];
+
+              // Draw our point
+              ctx.fillRect(x, y, 2, 2);
+              pointIdx += 1;
+            }
+
+            lastFrame = timestamp;
+          }
+        }
+      }
+
+      requestAnimationFrame(Draw());
+
+    </script>
+  </body>
+</html>
