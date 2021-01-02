@@ -21,17 +21,49 @@
 
       let c = document.getElementById('canvas')
       let ctx = c.getContext('2d');
+      ctx.strokeWidth = 2;
       let bounds = { w: c.width, h: c.height }
 
-      // Why does clearRect not work?
       c.addEventListener('mousemove', ev => {
         ctx.clearRect(0, 0, 500, 500);
         ctx.beginPath();
-        ctx.moveTo(Math.floor(ev.offsetX), 0);
-        ctx.lineTo(Math.floor(ev.offsetX), 500);
+        ctx.textAlign = "center";
+        ctx.font = "bold 14px Inter";
+        let xPercentage = ev.offsetX / 500;
+        ctx.fillText(xPercentage.toFixed(2), ev.offsetX, 480);
+
+        // path representing percent of total hull polygon
+
+        let firstPoint = hull.shift();
+
+        // drawPath(path);
         ctx.stroke();
       })
 
+      // `xs` :: Array Point
+      // returns :: Array Array Point
+      const edges = xs => {
+        let edges = [];
+
+        for (let edge = 0; edge < (xs.length - 1); edge++) {
+          // Take each point and it's subsequent to form an edge
+          edges.push([xs[edge], xs[(edge + 1)]]);
+        }
+
+        return edges;
+      }
+
+      const distance = path => {
+        path.reduce((acc, p) => {
+          return {
+            d: magnitude(subtract(acc.last,p)),
+            last: p
+          }
+        }, { d:0, last:{ x:0,y:0 } })
+      }
+
+      // Point { x,y }
+      // :: Array Point
       const drawPath = ([ first, ...rest ]) => {
         ctx.beginPath();
         ctx.moveTo( first.x, first.y );
@@ -42,6 +74,7 @@
       }
       
       // Add two vectors
+      // Point, Point where Point { x,y }
       const add = (a, b) => {
         return {
           x: a.x + b.x,
@@ -67,7 +100,10 @@
                     .map(p => ({ x: Math.floor(p.x), y: Math.floor(p.y) }));
 
       // Get last n elements from xs
-      const lastN = (n, xs) => (xs.slice(xs.length - n))
+      const lastN = n => xs => (xs.slice(xs.length - n))
+
+      // Last 1
+      const last = lastN(1);
 
       // Subtract one vector from another
       const difference = (v,w) => {
@@ -77,8 +113,20 @@
         }
         return diff;
       }
+      const subtract = difference;
 
-      const magnitude = v => Math.sqrt(v.reduce((acc, e) => acc + (e * e), 0))
+      // Where `v` is of form { x,y }
+      const magnitude = v => {
+        let m = 0;
+        
+        // square and sum each term
+        for (const prop of Object.getOwnPropertyNames(v)){
+          m += Math.pow(v[prop], 2);
+        }
+
+        // square root sum
+        return Math.sqrt(m);
+      }
 
       // A vector which retains it's directionality but magnitude is 1
       // -- divide each component by the magnitude of v
@@ -115,7 +163,7 @@
 
       // Determines if tail of chain makes a left turn
       const leftTurn = (xs) => {
-        let [ p, q, r ] = lastN(3, xs),
+        let [ p, q, r ] = lastN(3)(xs),
             pp = { x:1, y:p.x, z:p.y },
             qq = { x:1, y:q.x, z:q.y },
             rr = { x:1, y:r.x, z:r.y };
@@ -135,33 +183,18 @@
 
       function Draw(){
 
-        let lastFrame = 0;
-        let pointIdx = 0;
-
         return function draw(timestamp) {
           requestAnimationFrame(draw);
-
-          let delta = timestamp - lastFrame;
-
-          if (delta >= 100){
-
-            // Draw each point
-            if (pointIdx < points.length){
-              // Grab a single point
-              const { x,y } = points[pointIdx];
-
-              // Draw our point
+            // Draw each point every frame
+            for(const { x,y } of points) {
               ctx.fillRect(x, y, 2, 2);
-              pointIdx += 1;
             }
-
-            lastFrame = timestamp;
-          }
         }
       }
 
       requestAnimationFrame(Draw());
 
+      const hull = convexHull(points);
     </script>
   </body>
 </html>

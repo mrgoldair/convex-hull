@@ -16,7 +16,7 @@ function lowerHull(points) {
   boundary.push(sortedPoints[0]);
   boundary.push(sortedPoints[1]);
 
-  // Test each point
+  // Test each point in the sorted set
   for (let i = 2; i < sortedPoints.length; i++) {
     // Push our candidate onto the chain
     boundary.push(sortedPoints[i]);
