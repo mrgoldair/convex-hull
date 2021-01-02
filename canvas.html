@@ -32,12 +32,6 @@
         let xPercentage = ev.offsetX / 500;
         ctx.fillText(xPercentage.toFixed(2), ev.offsetX, 480);
 
-        // path representing percent of total hull polygon
-
-        let firstPoint = hull.shift();
-
-        // drawPath(path);
-        ctx.stroke();
       })
 
       // `xs` :: Array Point
@@ -195,6 +189,10 @@
       requestAnimationFrame(Draw());
 
       const hull = convexHull(points);
+      let ed = edges(hull);
+      let hullLength = ed.reduce((acc, e) => {
+        return acc + magnitude(subtract(e[0], e[1]));
+      }, 0);
     </script>
   </body>
 </html>
