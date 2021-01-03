@@ -26,12 +26,40 @@
 
       c.addEventListener('mousemove', ev => {
         ctx.clearRect(0, 0, 500, 500);
-        ctx.beginPath();
         ctx.textAlign = "center";
         ctx.font = "bold 14px Inter";
         let xPercentage = ev.offsetX / 500;
         ctx.fillText(xPercentage.toFixed(2), ev.offsetX, 480);
 
+        shadow = ed.reduce((acc, e) => {
+
+          if (acc.remaining > 0) {
+            let edgeLength = magnitude(subtract(e[0], e[1]));
+            if (edgeLength < acc.remaining) {
+              acc.edges.push(e)
+              acc.remaining = acc.remaining - edgeLength;
+              // console.log("Remaining: %s", acc.remaining);
+              // console.log("Edge: %s", edgeLength);
+            } else {
+              let end = lerp((acc.remaining / edgeLength), e[0], e[1]);
+              console.log("Remaining: %s", acc.remaining);
+              console.log("Edge: %s", magnitude(subtract(e[0], end)));
+              acc.edges.push([e[0], end]);
+              acc.remaining = 0;
+            }
+          }
+          // else if (edgeLength == acc.remaining) {
+          //     acc.edges.push(e);
+          //     acc.remaining = 0;
+          //     // console.log("Remaining: %s", acc.remaining);
+          //     // console.log("Edge: %s", edgeLength);
+          return acc;
+        }, {
+          remaining: xPercentage * hullLength,
+          edges: []
+        });
+
+        drawEdges(shadow.edges);
       })
 
       // `xs` :: Array Point
@@ -56,6 +84,17 @@
         }, { d:0, last:{ x:0,y:0 } })
       }
 
+      const drawEdges = xs => {
+        ctx.beginPath();
+
+        xs.forEach(edge => {
+          ctx.moveTo( edge[0].x, edge[0].y );
+          ctx.lineTo( edge[1].x, edge[1].y );
+        });
+
+        ctx.stroke();
+      }
+
       // Point { x,y }
       // :: Array Point
       const drawPath = ([ first, ...rest ]) => {
@@ -78,7 +117,7 @@
       }
 
       // Scalar multiple a point object by `n`
-      const scale = n => ({ x, y }) => ({ x:(x * n), y:(y * n) });
+      const scale = (n, { x,y,z }) => ({ x:(x * n), y:(y * n), z:(z * n) });
 
       // Translate or shift a point object by `n`
       const translate = n => ({ x, y }) => ({ x: (x + n), y: (y + n) });
@@ -114,12 +153,12 @@
         let m = 0;
         
         // square and sum each term
-        for (const prop of Object.getOwnPropertyNames(v)){
-          m += Math.pow(v[prop], 2);
-        }
+        // for (const prop of Object.getOwnPropertyNames(v)){
+        //   m += Math.pow(v[prop], 2);
+        // }
 
         // square root sum
-        return Math.sqrt(m);
+        return Math.sqrt( Math.pow(v['x'],2) + Math.pow(v['y'],2) );
       }
 
       // A vector which retains it's directionality but magnitude is 1
@@ -193,6 +232,7 @@
       let hullLength = ed.reduce((acc, e) => {
         return acc + magnitude(subtract(e[0], e[1]));
       }, 0);
+
     </script>
   </body>
 </html>
