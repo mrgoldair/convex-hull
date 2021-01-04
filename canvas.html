@@ -38,21 +38,13 @@
             if (edgeLength < acc.remaining) {
               acc.edges.push(e)
               acc.remaining = acc.remaining - edgeLength;
-              // console.log("Remaining: %s", acc.remaining);
-              // console.log("Edge: %s", edgeLength);
             } else {
               let end = lerp((acc.remaining / edgeLength), e[0], e[1]);
-              console.log("Remaining: %s", acc.remaining);
-              console.log("Edge: %s", magnitude(subtract(e[0], end)));
               acc.edges.push([e[0], end]);
               acc.remaining = 0;
             }
           }
-          // else if (edgeLength == acc.remaining) {
-          //     acc.edges.push(e);
-          //     acc.remaining = 0;
-          //     // console.log("Remaining: %s", acc.remaining);
-          //     // console.log("Edge: %s", edgeLength);
+
           return acc;
         }, {
           remaining: xPercentage * hullLength,
