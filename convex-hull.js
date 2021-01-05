@@ -1,4 +1,6 @@
 function convexHull(points) {
+
+  // Maybe sort the points here then pass through...
   let lh = lowerHull( points );
   let uh = upperHull( points );
 
@@ -7,7 +9,7 @@ function convexHull(points) {
 
 function lowerHull(points) {
   // Sort our points l->r so we can pick them out
-  const sortedPoints = points.sort((p, q) => (p.x < q.x));
+  const sortedPoints = points.sort((p, q) => (q.x - p.x));
 
   // The list of points in the convex hull
   let boundary = [];
@@ -33,12 +35,13 @@ function lowerHull(points) {
 function upperHull(points) {
 
   // Sort our points l->r so we can pick them out
-  const sortedPoints = points.sort((p, q) => (p.x > q.x));
+  const sortedPoints = points.sort((p, q) => (p.x - q.x))
 
   // The list of points in the convex hull
   let boundary = [];
 
   // Add the first two points to kick off our chain
+  let [ p1, p2, ...rest ] = sortedPoints;
   boundary.push(sortedPoints[0]);
   boundary.push(sortedPoints[1]);
 

@@ -67,15 +67,6 @@
         return edges;
       }
 
-      const distance = path => {
-        path.reduce((acc, p) => {
-          return {
-            d: magnitude(subtract(acc.last,p)),
-            last: p
-          }
-        }, { d:0, last:{ x:0,y:0 } })
-      }
-
       const drawEdges = xs => {
         ctx.beginPath();
 
