@@ -16,8 +16,13 @@
   </head>
   <body>
     <canvas id="canvas" width="500" height="500"></canvas>
-    <script type="text/javascript" src="/convex-hull.js"></script>
-    <script type="text/javascript">
+    <script type="module">
+      
+      import { convexHull } from './convex-hull.js';
+
+      // Point [ Int, Int ]
+      // Path [ Point ]
+      // Edge [ Point, Point ]
 
       let c = document.getElementById('canvas')
       let ctx = c.getContext('2d');
@@ -31,7 +36,8 @@
         let xPercentage = ev.offsetX / 500;
         ctx.fillText(xPercentage.toFixed(2), ev.offsetX, 480);
 
-        shadow = ed.reduce((acc, e) => {
+        // partial hull
+        let shadow = ed.reduce((acc, e) => {
 
           if (acc.remaining > 0) {
             let edgeLength = magnitude(subtract(e[0], e[1]));
@@ -54,8 +60,9 @@
         drawEdges(shadow.edges);
       })
 
-      // `xs` :: Array Point
-      // returns :: Array Array Point
+      // xs :: [ Point ]
+      // type Polygon = Array Point / [ Point ]
+      // returns :: [ Edge ]
       const edges = xs => {
         let edges = [];
 
@@ -67,6 +74,7 @@
         return edges;
       }
 
+      // xs :: [ Edge ]
       const drawEdges = xs => {
         ctx.beginPath();
 
@@ -78,8 +86,7 @@
         ctx.stroke();
       }
 
-      // Point { x,y }
-      // :: Array Point
+      // xs :: Path
       const drawPath = ([ first, ...rest ]) => {
         ctx.beginPath();
         ctx.moveTo( first.x, first.y );
@@ -109,17 +116,11 @@
       const randomPoint = (v) => ({ x: v * Math.random(), y: v * Math.random() });
 
       // Create out initial point set - constrained to a center square
-      const points = Array(50)
-                    .fill(350)
+      const points = Array(500)
+                    .fill(450)
                     .map(randomPoint)
-                    .map(translate(87))
+                    .map(translate(25))
                     .map(p => ({ x: Math.floor(p.x), y: Math.floor(p.y) }));
-
-      // Get last n elements from xs
-      const lastN = n => xs => (xs.slice(xs.length - n))
-
-      // Last 1
-      const last = lastN(1);
 
       // Subtract one vector from another
       const difference = (v,w) => {
@@ -156,47 +157,6 @@
         return add(scale(1 - p, a), scale(p, b))
       }
 
-      // a, b, c -- d, e, f
-      const cross = (a, b) => {
-        return {
-          x: a.y * b.z - a.z * b.y,
-          y: a.z * b.x - a.x * b.z,
-          z: a.x * b.y - a.y * b.x
-        };
-        // return [
-        //   b * f - c * e,
-        //   c * d - a * f,
-        //   a * e - b * d
-        // ];
-      }
-
-      //return a * d + b * e + c * f;
-      const dot = (a, b) => a.x * b.x + a.y * b.y + a.z * b.z;
-
-      const determinant = (a, b, c) => {
-        return dot(cross(a, b), c);
-      }
-
-      // Determines if tail of chain makes a left turn
-      const leftTurn = (xs) => {
-        let [ p, q, r ] = lastN(3)(xs),
-            pp = { x:1, y:p.x, z:p.y },
-            qq = { x:1, y:q.x, z:q.y },
-            rr = { x:1, y:r.x, z:r.y };
-
-        return determinant(pp, qq, rr) <= 0;
-      }
-
-      // Removes nth element from tail
-      const removeNthFromTail = (n, xs) => {
-        // Copy our input array
-        let res = Array.from(xs);
-
-        // Splice works in-place
-        res.splice(res.length - n, 1);
-        return res;
-      }
-
       function Draw(){
 
         return function draw(timestamp) {
@@ -210,8 +170,11 @@
 
       requestAnimationFrame(Draw());
 
+      // [ Point ] -> [ Edge ]
       const hull = convexHull(points);
+      // [ Point ] -> [ Edge ]
       let ed = edges(hull);
+      // [ Edge ] -> Number
       let hullLength = ed.reduce((acc, e) => {
         return acc + magnitude(subtract(e[0], e[1]));
       }, 0);

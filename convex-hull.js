@@ -1,4 +1,53 @@
-function convexHull(points) {
+import { foo } from './bar.js';
+
+// Determines if tail of chain makes a left turn
+const leftTurn = (xs) => {
+  let [ p, q, r ] = lastN(3)(xs),
+      pp = { x:1, y:p.x, z:p.y },
+      qq = { x:1, y:q.x, z:q.y },
+      rr = { x:1, y:r.x, z:r.y };
+
+  return determinant(pp, qq, rr) <= 0;
+}
+
+// a, b, c -- d, e, f
+const cross = (a, b) => {
+  return {
+    x: a.y * b.z - a.z * b.y,
+    y: a.z * b.x - a.x * b.z,
+    z: a.x * b.y - a.y * b.x
+  };
+  // return [
+  //   b * f - c * e,
+  //   c * d - a * f,
+  //   a * e - b * d
+  // ];
+}
+
+//return a * d + b * e + c * f;
+const dot = (a, b) => a.x * b.x + a.y * b.y + a.z * b.z;
+
+const determinant = (a, b, c) => {
+  return dot(cross(a, b), c);
+}
+
+// Removes nth element from tail
+const removeNthFromTail = (n, xs) => {
+  // Copy our input array
+  let res = Array.from(xs);
+
+  // Splice works in-place
+  res.splice(res.length - n, 1);
+  return res;
+}
+
+// Get last n elements from xs
+const lastN = n => xs => (xs.slice(xs.length - n))
+
+// Last 1
+const last = lastN(1);
+
+export function convexHull(points) {
 
   // Maybe sort the points here then pass through...
   let lh = lowerHull( points );

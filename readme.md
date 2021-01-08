@@ -6,25 +6,21 @@ Convex hull from first principals. This means no 3rd party libraries.
 
 ###### Pseudo code
 
+The complete convex hull is formed in two passes – one for the upper hull, one for the lower hull.
+
 This forms the upper hull, in a clock-wise fashion.
 
-```
-Add the first 2 points from the point set (sorted by increasing x value) to the hull list
-	For each point `p` of the remaining points
-		While hull list has more than two points and the last 		    		three points form a left turn
-			Remove the second-to-last point
-```
+- Add the first 2 points from the point set `ps` (sorted by increasing x value) to the hull list `upper-hull`
+  	- For each point `p` of the remaining points
+  		- W- While hull list has more than two points and the last three points form a left turn
+  	     - Remove the second-to-last point
 
 To find the lower hull
 
-```
-Add the last 2 points from the point set
-	For each point `p` of the remaining points
-		While hull list has more than two points and the last 		    		three points form a left turn
-			Remove the second-to-last point
-			
-Remove the first and last points from the lower hull and join to the upper hull.
-```
+- Add the last 2 points from the point set `ps` to `lower-hull`
+  - For each point `p` of the remaining points
+    - While hull list has more than two points and the last three points form a left turn
+      - Remove the second-to-last point
 
 ###### Determining left and right
 
