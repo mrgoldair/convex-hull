@@ -39,12 +39,19 @@
         // partial hull
         let shadow = ed.reduce((acc, e) => {
 
+          // While we have a percentage of curve we still need to draw
           if (acc.remaining > 0) {
+
+            // Current Edge
             let edgeLength = magnitude(subtract(e[0], e[1]));
+
+            // Draw the whole edge
             if (edgeLength < acc.remaining) {
               acc.edges.push(e)
               acc.remaining = acc.remaining - edgeLength;
+            // Draw a portion of the edge
             } else {
+              // Treating the points as two vectors using `lerp`
               let end = lerp((acc.remaining / edgeLength), e[0], e[1]);
               acc.edges.push([e[0], end]);
               acc.remaining = 0;
