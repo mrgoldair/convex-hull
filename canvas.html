@@ -8,16 +8,12 @@
         width: 100vw;
         height: 100vh;
       }
-
-      canvas {
-        background-color: antiquewhite;
-      }
     </style>
   </head>
   <body>
     <canvas id="canvas" width="500" height="500"></canvas>
     <script type="module">
-      
+
       import { convexHull } from './convex-hull.js';
 
       // Point [ Int, Int ]
@@ -26,8 +22,8 @@
 
       let c = document.getElementById('canvas')
       let ctx = c.getContext('2d');
-      ctx.strokeWidth = 2;
       let bounds = { w: c.width, h: c.height }
+      ctx.strokeWidth = 2;
 
       c.addEventListener('mousemove', ev => {
         ctx.clearRect(0, 0, 500, 500);
@@ -179,8 +175,10 @@
 
       // [ Point ] -> [ Edge ]
       const hull = convexHull(points);
+
       // [ Point ] -> [ Edge ]
       let ed = edges(hull);
+
       // [ Edge ] -> Number
       let hullLength = ed.reduce((acc, e) => {
         return acc + magnitude(subtract(e[0], e[1]));
