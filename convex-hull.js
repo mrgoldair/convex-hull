@@ -1,4 +1,4 @@
-import { foo } from './bar.js';
+import { cross, dot, determinant } from './vec.js';
 
 // Determines if tail of chain makes a left turn
 const leftTurn = (xs) => {
@@ -8,27 +8,6 @@ const leftTurn = (xs) => {
       rr = { x:1, y:r.x, z:r.y };
 
   return determinant(pp, qq, rr) <= 0;
-}
-
-// a, b, c -- d, e, f
-const cross = (a, b) => {
-  return {
-    x: a.y * b.z - a.z * b.y,
-    y: a.z * b.x - a.x * b.z,
-    z: a.x * b.y - a.y * b.x
-  };
-  // return [
-  //   b * f - c * e,
-  //   c * d - a * f,
-  //   a * e - b * d
-  // ];
-}
-
-//return a * d + b * e + c * f;
-const dot = (a, b) => a.x * b.x + a.y * b.y + a.z * b.z;
-
-const determinant = (a, b, c) => {
-  return dot(cross(a, b), c);
 }
 
 // Removes nth element from tail
