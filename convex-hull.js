@@ -1,4 +1,5 @@
 import { cross, dot, determinant } from './vec.js';
+import { last, lastN, removeNthFromTail } from './list.js'
 
 // Determines if tail of chain makes a left turn
 const leftTurn = (xs) => {
@@ -9,22 +10,6 @@ const leftTurn = (xs) => {
 
   return determinant(pp, qq, rr) <= 0;
 }
-
-// Removes nth element from tail
-const removeNthFromTail = (n, xs) => {
-  // Copy our input array
-  let res = Array.from(xs);
-
-  // Splice works in-place
-  res.splice(res.length - n, 1);
-  return res;
-}
-
-// Get last n elements from xs
-const lastN = n => xs => (xs.slice(xs.length - n))
-
-// Last 1
-const last = lastN(1);
 
 export function convexHull(points) {
 
