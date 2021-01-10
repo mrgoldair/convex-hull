@@ -22,7 +22,14 @@ export function convexHull(points) {
 
 function lowerHull(points) {
   // Sort our points l->r so we can pick them out
-  const sortedPoints = points.sort((p, q) => (q.x - p.x));
+  const sortedPoints = points.sort((p, q) => {
+    // If x values are equal, sort by y
+    if ((q.x - p.x) == 0){
+      return (q.y - p.y)
+    }
+
+    return (q.x - p.x);
+  });
 
   // The list of points in the convex hull
   let boundary = [];
@@ -48,7 +55,13 @@ function lowerHull(points) {
 function upperHull(points) {
 
   // Sort our points l->r so we can pick them out
-  const sortedPoints = points.sort((p, q) => (p.x - q.x))
+  const sortedPoints = points.sort((p, q) => {
+    if ((p.x - q.x) == 0){
+      return (p.y - q.y);
+    }
+
+    return (p.x - q.x);
+  })
 
   // The list of points in the convex hull
   let boundary = [];
