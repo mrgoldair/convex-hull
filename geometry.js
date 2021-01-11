@@ -1,5 +1,19 @@
-import { cross, dot, determinant } from './vec.js';
-import { last, lastN, removeNthFromTail } from './list.js'
+import { determinant } from './vec.js'
+import { lastN, removeNthFromTail } from './list.js'
+
+// xs :: [ Point ]
+// type Polygon = Array Point / [ Point ]
+// returns :: [ Edge ]
+export const edges = xs => {
+  let edges = [];
+
+  for (let edge = 0; edge < (xs.length - 1); edge++) {
+    // Take each point and it's subsequent to form an edge
+    edges.push([xs[edge], xs[(edge + 1)]]);
+  }
+
+  return edges;
+}
 
 // Determines if tail of chain makes a left turn
 const leftTurn = (xs) => {

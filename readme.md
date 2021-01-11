@@ -22,6 +22,10 @@ To find the lower hull
     - While hull list has more than two points and the last three points form a left turn
       - Remove the second-to-last point
 
+Now, there are duplicate points between the two hulls – namely the first and last of each. So we remove the first and last points of the lower hull and join to the upper hull to complete the hull.
+
+
+
 ###### Determining left and right
 
 This could be accomplished by calculating and comparing the gradient between the 3 points; 
@@ -38,7 +42,7 @@ Also it's origin is the top left when my mental model is the lower left, so mayb
 
 
 
-###### <u>Parametric Line</u>
+###### Drawing the line
 
 I'll need lines in the form
 $$

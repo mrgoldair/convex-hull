@@ -3,23 +3,33 @@
     <style>
       body {
         display: flex;
+        flex-direction: column;
         justify-content: center;
         align-items: center;
         width: 100vw;
         height: 100vh;
       }
+
+      h1 {
+        font-family: sans-serif;
+        letter-spacing: .05em;
+        border: 3px solid;
+        font-weight: 600;
+        padding: 5px 30px;
+      }
     </style>
   </head>
   <body>
+    <h1>Convex Hull</h1>
     <canvas id="canvas" width="500" height="500"></canvas>
     <script type="module">
 
-      import { convexHull } from './convex-hull.js';
+      import { edges, convexHull } from './geometry.js';
+      import { translate, magnitude, subtract, lerp } from './vec.js';
 
       // Point [ Int, Int ]
       // Path [ Point ]
       // Edge [ Point, Point ]
-
       let c = document.getElementById('canvas')
       let ctx = c.getContext('2d');
       let bounds = { w: c.width, h: c.height }
@@ -63,20 +73,6 @@
         drawEdges(shadow.edges);
       })
 
-      // xs :: [ Point ]
-      // type Polygon = Array Point / [ Point ]
-      // returns :: [ Edge ]
-      const edges = xs => {
-        let edges = [];
-
-        for (let edge = 0; edge < (xs.length - 1); edge++) {
-          // Take each point and it's subsequent to form an edge
-          edges.push([xs[edge], xs[(edge + 1)]]);
-        }
-
-        return edges;
-      }
-
       // xs :: [ Edge ]
       const drawEdges = xs => {
         ctx.beginPath();
@@ -98,22 +94,6 @@
         }
         ctx.stroke();
       }
-      
-      // Add two vectors
-      // Point, Point where Point { x,y }
-      const add = (a, b) => {
-        return {
-          x: a.x + b.x,
-          y: a.y + b.y,
-          z: a.z + b.z
-        }
-      }
-
-      // Scalar multiple a point object by `n`
-      const scale = (n, { x,y,z }) => ({ x:(x * n), y:(y * n), z:(z * n) });
-
-      // Translate or shift a point object by `n`
-      const translate = n => ({ x, y }) => ({ x: (x + n), y: (y + n) });
 
       // A random 2d point
       const randomPoint = (v) => ({ x: v * Math.random(), y: v * Math.random() });
@@ -124,41 +104,6 @@
                     .map(randomPoint)
                     .map(translate(25))
                     .map(p => ({ x: Math.floor(p.x), y: Math.floor(p.y) }));
-
-      // Subtract one vector from another
-      const difference = (v,w) => {
-        let diff = {};
-        for (const prop in v) {
-          diff[prop] = v[prop] - w[prop];
-        }
-        return diff;
-      }
-      const subtract = difference;
-
-      // Where `v` is of form { x,y }
-      const magnitude = v => {
-        let m = 0;
-        
-        // square and sum each term
-        // for (const prop of Object.getOwnPropertyNames(v)){
-        //   m += Math.pow(v[prop], 2);
-        // }
-
-        // square root sum
-        return Math.sqrt( Math.pow(v['x'],2) + Math.pow(v['y'],2) );
-      }
-
-      // A vector which retains it's directionality but magnitude is 1
-      // -- divide each component by the magnitude of v
-      const normalise = v => {
-        const m = magnitude(v);
-        return v.map(e => e / m);
-      }
-
-      // Linearly interpolate between two points
-      const lerp = (p, a, b) => {
-        return add(scale(1 - p, a), scale(p, b))
-      }
 
       function Draw(){
 
