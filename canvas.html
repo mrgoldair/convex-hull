@@ -96,21 +96,23 @@
       }
 
       // A random 2d point
-      const randomPoint = (v) => ({ x: v * Math.random(), y: v * Math.random() });
+      const randomPoint = (v) => {
+        return [ (v * Math.random()), (v * Math.random()) ];
+      };
 
       // Create out initial point set - constrained to a center square
       const points = Array(500)
                     .fill(450)
                     .map(randomPoint)
                     .map(translate(25))
-                    .map(p => ({ x: Math.floor(p.x), y: Math.floor(p.y) }));
+                    .map(([ x,y ]) => ({ x: Math.floor(x), y: Math.floor(y) }));
 
       function Draw(){
 
         return function draw(timestamp) {
           requestAnimationFrame(draw);
             // Draw each point every frame
-            for(const { x,y } of points) {
+            for(const [ x,y ] of points) {
               ctx.fillRect(x, y, 2, 2);
             }
         }
