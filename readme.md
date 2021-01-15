@@ -28,11 +28,13 @@ Now, there are duplicate points between the two hulls – namely the first and l
 
 ###### Determining left and right
 
-This could be accomplished by calculating and comparing the gradient between the 3 points; 
+This could be accomplished by calculating and comparing the gradient between the 3 points. This would take two vector subtractions and then the comparison of their respective ratios. For three points on the hull represented by `t, u, v` and two vectors represented by `u-t` and `v-u`, if the gradient for `v-u` is greater than that of `u-t` the three points make a left turn; if it's less the three points make a right turn.
 
-Using the determinant - which implies we need 3-dimensional vectors.
+However another technique could be used that could involve potentially less calculation.
 
+Using the determinant we could reduce the number of calculations needed to find a "left or right turn" to `xx`. In order to use the determinant you need to realise the   determinant is only defined for 3 dimensions. This is obviously tricky because we're drawing on a HTMLCanvas which is 2D.
 
+Because the purpose of the determinant is to calculate the volume created by 3 vectors, it's tempting to just slap on a third dimension (usually denoted `z`) set to 1. Although all the vectors now have a third dimension the volume is 0. This is because by having all the same value for a particular dimension there's no depth – we need a difference of dimension to convey depth (and area in 2D) – and when we have no depth we only have area.
 
 ###### Points as vectors
 
