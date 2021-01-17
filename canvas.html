@@ -77,40 +77,42 @@
       const drawEdges = xs => {
         ctx.beginPath();
 
-        xs.forEach(edge => {
-          ctx.moveTo( edge[0].x, edge[0].y );
-          ctx.lineTo( edge[1].x, edge[1].y );
+        xs.forEach(([[ax,ay], [bx,by]]) => {
+          ctx.moveTo( ax, ay );
+          ctx.lineTo( bx, by );
         });
 
         ctx.stroke();
       }
 
       // xs :: Path
-      const drawPath = ([ first, ...rest ]) => {
+      const drawPath = ([ [ax,ay], ...rest ]) => {
         ctx.beginPath();
-        ctx.moveTo( first.x, first.y );
-        for (const { x,y } of rest) {
+        ctx.moveTo( ax,ay );
+        for (const [ x,y ] of rest) {
           ctx.lineTo( x, y );
         }
         ctx.stroke();
       }
 
       // A random 2d point
-      const randomPoint = (v) => ({ x: v * Math.random(), y: v * Math.random() });
+      const randomPoint = (v) => {
+        return [ (v * Math.random()), (v * Math.random()) ];
+      };
 
       // Create out initial point set - constrained to a center square
-      const points = Array(500)
+      const points = Array(12)
                     .fill(450)
                     .map(randomPoint)
                     .map(translate(25))
-                    .map(p => ({ x: Math.floor(p.x), y: Math.floor(p.y) }));
-
+                    .map(([ x,y ]) => ([ Math.floor(x), Math.floor(y) ]));
+      console.log(points);
       function Draw(){
 
         return function draw(timestamp) {
           requestAnimationFrame(draw);
             // Draw each point every frame
-            for(const { x,y } of points) {
+            for(const [ x,y ] of points) {
               ctx.fillRect(x, y, 2, 2);
             }
         }
@@ -119,10 +121,10 @@
       requestAnimationFrame(Draw());
 
       // [ Point ] -> [ Edge ]
-      const hull = convexHull(points);
+      window.hull = convexHull(points);
 
       // [ Point ] -> [ Edge ]
-      let ed = edges(hull);
+      var ed = edges(hull);
 
       // [ Edge ] -> Number
       let hullLength = ed.reduce((acc, e) => {
