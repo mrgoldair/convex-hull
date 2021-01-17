@@ -15,34 +15,36 @@ export const edges = xs => {
   return edges;
 }
 
-// Determines if tail of chain makes a left turn
+// [ Point ] -> Boolean
 const leftTurn = (xs) => {
-  let [ p, q, r ] = lastN(3)(xs),
-      pp = { x:1, y:p.x, z:p.y },
-      qq = { x:1, y:q.x, z:q.y },
-      rr = { x:1, y:r.x, z:r.y };
+  let [ [px,py], [qx,qy], [rx,ry] ] = lastN(3)(xs);
+  let p = [ px, py, 1 ],
+      q = [ qx, qy, 1 ],
+      r = [ rx, ry, 1 ];
 
-  return determinant(pp, qq, rr) <= 0;
+  return determinant(p, q, r) <= 0;
 }
 
+// [ Point ] -> [ Point ]
 export function convexHull(points) {
 
   // Maybe sort the points here then pass through...
-  let lh = lowerHull( points );
   let uh = upperHull( points );
+  let lh = lowerHull( points );
 
   return [ ...uh, ...lh.slice(0, lh.length) ];
 }
 
+// [ Point ] -> [ Point ]
 function lowerHull(points) {
   // Sort our points l->r so we can pick them out
-  const sortedPoints = points.sort((p, q) => {
+  const sortedPoints = points.sort(( [px,py], [qx,qy] ) => {
     // If x values are equal, sort by y
-    if ((q.x - p.x) == 0){
-      return (q.y - p.y)
+    if ((qx - px) == 0){
+      return (qy - py)
     }
 
-    return (q.x - p.x);
+    return (qx - px);
   });
 
   // The list of points in the convex hull
@@ -66,22 +68,22 @@ function lowerHull(points) {
   return boundary;
 }
 
+// [ Point ] -> [ Point ]
 function upperHull(points) {
 
   // Sort our points l->r so we can pick them out
-  const sortedPoints = points.sort((p, q) => {
-    if ((p.x - q.x) == 0){
-      return (p.y - q.y);
+  const sortedPoints = points.sort(([px,py], [qx,qy]) => {
+    if ((px - qx) == 0){
+      return (py - qy);
     }
 
-    return (p.x - q.x);
+    return (px - qx);
   })
 
   // The list of points in the convex hull
   let boundary = [];
 
   // Add the first two points to kick off our chain
-  let [ p1, p2, ...rest ] = sortedPoints;
   boundary.push(sortedPoints[0]);
   boundary.push(sortedPoints[1]);
 
