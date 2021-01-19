@@ -34,7 +34,9 @@ However another technique could be used that could involve potentially less calc
 
 Using the determinant we could reduce the number of calculations needed to find a "left or right turn" to `xx`. In order to use the determinant you need to realise the   determinant is only defined for 3 dimensions. This is obviously tricky because we're drawing on a HTMLCanvas which is 2D.
 
-Because the purpose of the determinant is to calculate the volume created by 3 vectors, it's tempting to just slap on a third dimension (usually denoted `z`) set to 1. Although all the vectors now have a third dimension the volume is 0. This is because by having all the same value for a particular dimension there's no depth – we need a difference of dimension to convey depth (and area in 2D) – and when we have no depth we only have area.
+Because the purpose of the determinant is to calculate the volume created by 3 vectors, it's tempting to just slap on a third dimension (usually denoted `z`) set to 1. ~~Although all the vectors now have a third dimension the volume is 0. This is because by having all the same value for a particular dimension there's no depth – we need a difference of dimension to convey depth (and area in 2D) – and when we have no depth we only have area.~~
+
+Simply setting `z` to 1 does actually work. For some reason in my working out, I thought there was something special about the `z` dimension not being homogeneous and therefore setting the `x` dimension to 1 and the `z` dimension takes on the `x` val of the points – in the end this just shifts the problem; there is nothing special about the `z` dimension in the calculation of the scalar triple product (or of any dimension over another). It must have been something off in my numbers used to do test data. Therefore, simply setting the `z` component to 1 for each point in the scalar-triple-product works.
 
 ###### Points as vectors
 
