@@ -1,5 +1,8 @@
+<!DOCTYPE html>
 <html>
   <head>
+    <meta charset="utf-8">
+    <title>Convex Hull</title>
     <style>
       body {
         display: flex;
@@ -15,7 +18,7 @@
         letter-spacing: .05em;
         border: 3px solid;
         font-weight: 600;
-        padding: 5px 30px;
+        padding: 9px 30px 3px 30px;
       }
     </style>
   </head>
@@ -24,6 +27,7 @@
     <canvas id="canvas" width="500" height="500"></canvas>
     <script type="module">
 
+      import { drawEdges, drawPath, randomPoint } from './canvas.js';
       import { edges, convexHull } from './geometry.js';
       import { translate, magnitude, subtract, lerp } from './vec.js';
 
@@ -70,35 +74,8 @@
           edges: []
         });
 
-        drawEdges(shadow.edges);
+        drawEdges(ctx, shadow.edges);
       })
-
-      // xs :: [ Edge ]
-      const drawEdges = xs => {
-        ctx.beginPath();
-
-        xs.forEach(([[ax,ay], [bx,by]]) => {
-          ctx.moveTo( ax, ay );
-          ctx.lineTo( bx, by );
-        });
-
-        ctx.stroke();
-      }
-
-      // xs :: Path
-      const drawPath = ([ [ax,ay], ...rest ]) => {
-        ctx.beginPath();
-        ctx.moveTo( ax,ay );
-        for (const [ x,y ] of rest) {
-          ctx.lineTo( x, y );
-        }
-        ctx.stroke();
-      }
-
-      // A random 2d point
-      const randomPoint = (v) => {
-        return [ (v * Math.random()), (v * Math.random()) ];
-      };
 
       // Create out initial point set - constrained to a center square
       const points = Array(12)
@@ -106,25 +83,21 @@
                     .map(randomPoint)
                     .map(translate(25))
                     .map(([ x,y ]) => ([ Math.floor(x), Math.floor(y) ]));
-      console.log(points);
-      function Draw(){
 
-        return function draw(timestamp) {
-          requestAnimationFrame(draw);
-            // Draw each point every frame
-            for(const [ x,y ] of points) {
-              ctx.fillRect(x, y, 2, 2);
-            }
+      function draw(){
+        // Draw each point every frame
+        for(const [ x,y ] of points) {
+          ctx.fillRect(x, y, 2, 2);
         }
       }
 
-      requestAnimationFrame(Draw());
+      requestAnimationFrame(draw);
 
       // [ Point ] -> [ Edge ]
-      window.hull = convexHull(points);
+      let hull = convexHull(points);
 
       // [ Point ] -> [ Edge ]
-      var ed = edges(hull);
+      let ed = edges(hull);
 
       // [ Edge ] -> Number
       let hullLength = ed.reduce((acc, e) => {

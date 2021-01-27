@@ -2,7 +2,7 @@
 
 
 
-Convex hull from first principals. This means no 3rd party libraries.
+Convex hull from first principals. No 3rd party libraries.
 
 ###### Pseudo code
 
@@ -48,9 +48,9 @@ Also it's origin is the top left when my mental model is the lower left, so mayb
 
 ###### Drawing the line
 
-I'll need lines in the form
+We need lines in the form
 $$
-w = u + t(v)
+w = u + dt(v)
 $$
 But using linear interpolation also produces the same result
 $$
