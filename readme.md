@@ -1,6 +1,10 @@
 # Convex Hull
 
-![https://github.com/mrgoldair/convex-hull/blob/master/screenshot.png](https://github.com/mrgoldair/convex-hull/blob/master/screenshot.png)
+
+
+<img src="https://github.com/mrgoldair/convex-hull/blob/master/screenshot.png" style="display:block; margin:0 auto;"/>
+
+
 
 Convex hull from first principals. No 3rd party libraries.
 
