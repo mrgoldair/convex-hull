@@ -4,11 +4,9 @@
 
 <img src="https://github.com/mrgoldair/convex-hull/blob/master/screenshot.png" style="display:block; margin:0 auto;"/>
 
+### Convex hull from first principals. No 3rd party libraries.
 
-
-Convex hull from first principals. No 3rd party libraries.
-
-###### Pseudo code
+#### Pseudo code
 
 The complete convex hull is formed in two passes – one for the upper hull, one for the lower hull.
 
@@ -30,7 +28,7 @@ Now, there are duplicate points between the two hulls – namely the first and l
 
 
 
-###### Determining left and right
+#### Determining left and right
 
 This could be accomplished by calculating and comparing the gradient between the 3 points. This would take two vector subtractions and then the comparison of their respective ratios. For three points on the hull represented by `t, u, v` and two vectors represented by `u-t` and `v-u`, if the gradient for `v-u` is greater than that of `u-t` the three points make a left turn; if it's less the three points make a right turn.
 
@@ -42,7 +40,7 @@ Because the purpose of the determinant is to calculate the volume created by 3 v
 
 Simply setting `z` to 1 does actually work. For some reason in my working out, I thought there was something special about the `z` dimension not being homogeneous and therefore setting the `x` dimension to 1 and the `z` dimension takes on the `x` val of the points – in the end this just shifts the problem; there is nothing special about the `z` dimension in the calculation of the scalar triple product (or of any dimension over another). It must have been something off in my numbers used to do test data. Therefore, simply setting the `z` component to 1 for each point in the scalar-triple-product works.
 
-###### Points as vectors
+#### Points as vectors
 
 Animating the convex hull via the cursor x-position from within the canvas. Converting this to a percentage and using that to determine how much of the convex hull to draw. At the moment I'm simply mapping the `scale` function (partially applied to the current x-position percentage) which is causing the whole path to shrink/grow.
 
@@ -50,7 +48,7 @@ Also it's origin is the top left when my mental model is the lower left, so mayb
 
 
 
-###### Drawing the line
+#### Drawing the line
 
 We need lines in the form
 $$
