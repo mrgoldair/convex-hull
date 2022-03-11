@@ -26,8 +26,6 @@ To find the lower hull
 
 Now, there are duplicate points between the two hulls – namely the first and last of each. So we remove the first and last points of the lower hull and join to the upper hull to complete the hull.
 
-
-
 #### Determining left and right
 
 This could be accomplished by calculating and comparing the gradient between the 3 points. This would take two vector subtractions and then the comparison of their respective ratios. For three points on the hull represented by `t, u, v` and two vectors represented by `u-t` and `v-u`, if the gradient for `v-u` is greater than that of `u-t` the three points make a left turn; if it's less the three points make a right turn.
@@ -46,17 +44,17 @@ Animating the convex hull via the cursor x-position from within the canvas. Conv
 
 Also it's origin is the top left when my mental model is the lower left, so maybe I'll need a function to map these spaces too.
 
-
-
 #### Drawing the line
 
 We need lines in the form
 $$
-w = u + dt(v)
+w = u + t.(v - u)
 $$
-But using linear interpolation also produces the same result
+Where $u$ and $v$ are vectors and $t$ is a scalar multiple. The vector $u$ effectively gives us the "starting point", while the difference of $v - u$ gives us a relative vector; the slope of a line running through $u$ and $v$. Scaling the vector $v - u$ by $t$ will give us a point on the line of $u,v$.
+
+Linear interpolation between the two points $u$ and $v$ can also be used. This can be viewed as a calculation which scales both input vectors to arrive at a point on what would be the difference vector $(v - u)$ of the previous example.
 $$
-v.(1-p) + u.p
+u.(1-p) + v.p
 $$
 Hull was only drawing in complete edges, whereas I wanted the edges to smoothly and continuously be drawn out as the percentage changed. This was down to an issue with how was I was reporting the value to the `lerp` function – it expects a value in the range 0-1 whereas I was reporting the percentage as a natural number.
 
